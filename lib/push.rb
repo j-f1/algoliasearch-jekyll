@@ -145,6 +145,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         record = batch[idx.to_i]
         Jekyll.logger.error 'Algolia Error: Record too big'
         Jekyll.logger.warn "Record path: #{record[:url]} § #{record[:unique_hierarchy]}"
+        Jekyll.logger.warn "Contents: #{record[:text][0...50]}..."
         return
       end
 
