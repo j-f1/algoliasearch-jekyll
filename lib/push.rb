@@ -139,8 +139,8 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     end
 
     # Display the error in a human-friendly way if possible
-    def display_error(error, batch)
-      if error.message =~ /"message":\s*"Record at the position/
+    def display_error(error, batch = nil)
+      if batch.present? && error.message =~ /"message":\s*"Record at the position/
         idx = /Record at the position (\d+) is/.match(error.message)[1].to_i
         record = batch[idx.to_i]
         Jekyll.logger.error 'Algolia Error: Record too big'
