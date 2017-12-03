@@ -139,7 +139,15 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
     end
 
     # Display the error in a human-friendly way if possible
-    def display_error(error)
+    def display_error(error, batch)
+      if error.message =~ /"message":\s*"Record at the position/
+        idx = /Record at the position (\d+) is/.match(error.message)[1].to_i
+        record = batch[idx.to_i]
+        Jekyll.logger.error 'Algolia Error: Record too big'
+        Jekyll.logger.warn "Record path: #{record[:url]} § #{record[:unique_hierarchy]}"
+        return
+      end
+
       error_handler = AlgoliaSearchErrorHandler.new
       readable_error = error_handler.readable_algolia_error(error.message)
 
@@ -172,7 +180,7 @@ class AlgoliaSearchJekyllPush < Jekyll::Command
         begin
           index.add_objects!(batch) unless @is_dry_run
         rescue StandardError => error
-          display_error(error)
+          display_error(error, batch)
           exit 1
         end
       end
